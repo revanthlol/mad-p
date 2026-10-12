@@ -1,0 +1,905 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Offline MAD practical cheatsheet: 12 concise Java and XML programs for Android 10 (API 29), with output checks and viva notes.">
+<meta name="theme-color" content="#111411">
+<meta name="color-scheme" content="dark">
+<title>MAD Final Practical | 12 Java + XML Programs</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111411'/%3E%3Ctext x='10' y='46' font-family='monospace' font-size='38' font-weight='700' fill='%23A9C99F'%3EM%3C/text%3E%3C/svg%3E">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+:root{
+  --bg:#111411;
+  --rail:#161916;
+  --surface:#1D211E;
+  --surface-2:#282D29;
+  --code:#101310;
+  --line:#343A35;
+  --line-2:#4A524B;
+  --text:#DCE3DA;
+  --dim:#B1BBAD;
+  --white:#E7EDE4;
+  --accent:#A9C99F;
+  --accent-ink:#10380C;
+  --accent-soft:#2C382A;
+  --r:10px;
+  --rail-w:280px;
+  --bar-h:56px;
+  --z-bar:10;
+  --z-scrim:20;
+  --z-drawer:30;
+  --z-progress:40;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"JetBrains Mono","Cascadia Code","SF Mono",Consolas,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:28px;
+  background:var(--bg);
+  -webkit-text-size-adjust:100%;
+}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font:15px/1.6 var(--sans);
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+body.lock{overflow:hidden}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* reading progress, driven by CSS scroll timeline where supported */
+.progress{
+  position:fixed;inset:0 0 auto 0;height:2px;
+  background:var(--accent);
+  transform-origin:0 50%;transform:scaleX(0);
+  z-index:var(--z-progress);pointer-events:none;
+}
+@supports (animation-timeline:scroll()){
+  .progress{animation:grow linear both;animation-timeline:scroll(root)}
+}
+@keyframes grow{to{transform:scaleX(1)}}
+
+/* layout */
+.shell{display:grid;grid-template-columns:var(--rail-w) minmax(0,1fr)}
+.topbar,.scrim,.rail-close{display:none}
+
+.rail{
+  position:sticky;top:0;
+  height:100vh;height:100dvh;
+  overflow-y:auto;
+  background:var(--rail);
+  border-right:1px solid var(--line);
+  padding:22px 12px 28px;
+  scrollbar-width:thin;scrollbar-color:var(--line-2) transparent;
+  scroll-behavior:smooth;
+}
+.rail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:0 10px 16px}
+.rail-title{display:block;font-size:14px;font-weight:600;color:var(--white)}
+.rail-sub{display:block;font-size:12.5px;color:var(--dim);margin-top:2px}
+.tree-item{
+  display:grid;grid-template-columns:28px 1fr;align-items:baseline;column-gap:8px;
+  min-height:40px;padding:9px 10px;margin-bottom:2px;
+  border-radius:8px;color:var(--text);text-decoration:none;
+  font-size:14px;line-height:1.35;
+  transition:background .2s ease,color .2s ease;
+}
+.tree-num{font-family:var(--mono);font-size:12px;color:var(--dim);transition:color .2s ease}
+.tree-item[aria-current]{background:var(--accent-soft);color:var(--white)}
+.tree-item[aria-current] .tree-num{color:var(--accent)}
+@media (hover:hover){.tree-item:hover{background:var(--surface)} .tree-item[aria-current]:hover{background:var(--accent-soft)}}
+
+.editor{padding:56px 56px 110px;max-width:1000px;width:100%}
+
+/* hero */
+.hero{margin-bottom:28px}
+.hero h1{
+  margin:0 0 10px;
+  font-size:clamp(28px,4.2vw,40px);line-height:1.1;letter-spacing:-.02em;
+  font-weight:650;color:var(--white);overflow-wrap:anywhere;
+}
+.meta{margin:0;color:var(--dim);font-size:14.5px}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin:24px 0 12px}
+.search{position:relative;flex:1 1 280px;min-width:0}
+.search svg{position:absolute;left:14px;top:50%;width:16px;height:16px;transform:translateY(-50%);color:var(--dim);pointer-events:none}
+.search kbd{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  font:12px var(--mono);color:var(--dim);
+  border:1px solid var(--line-2);border-radius:6px;padding:1px 7px;pointer-events:none;
+}
+input[type=search]{
+  width:100%;min-height:44px;
+  font:inherit;font-size:15px;color:var(--white);
+  background:var(--surface);border:1px solid var(--line-2);border-radius:var(--r);
+  padding:0 44px 0 40px;
+  transition:border-color .2s ease,background .2s ease;
+  -webkit-appearance:none;appearance:none;
+}
+input[type=search]::placeholder{color:var(--dim)}
+input[type=search]:focus{border-color:var(--accent);outline:none;background:var(--surface-2)}
+input[type=search]::-webkit-search-cancel-button{display:none}
+.btn{
+  font:inherit;font-size:14px;color:var(--white);
+  background:var(--surface);border:1px solid var(--line-2);border-radius:var(--r);
+  min-height:44px;padding:0 18px;cursor:pointer;
+  transition:background .2s ease,border-color .2s ease;
+}
+@media (hover:hover){.btn:hover{background:var(--surface-2);border-color:#63745F}}
+.btn:active{background:var(--surface-2)}
+#count{margin:0;color:var(--dim);font-size:13px}
+.empty{padding:36px 0;color:var(--dim)}
+
+/* setup panel */
+.setup{
+  margin:30px 0 64px;padding:26px 28px;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  display:grid;grid-template-columns:1fr 1fr;gap:4px 36px;
+  font-size:14.5px;line-height:1.7;
+}
+.setup h2{grid-column:1/-1;margin:0 0 6px;font-size:18px;color:var(--white);font-weight:620}
+.setup p{margin:0 0 12px}
+.setup strong{color:var(--white);font-weight:600}
+.setup a{color:var(--accent);text-underline-offset:3px}
+p code,li code{
+  font-family:var(--mono);font-size:.88em;color:var(--white);
+  background:var(--surface-2);border-radius:6px;padding:2px 6px;
+  overflow-wrap:anywhere;
+}
+
+/* program cards */
+section.card{margin:0 0 72px}
+.card-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.badge{
+  flex-shrink:0;min-width:36px;height:30px;padding:0 8px;
+  display:grid;place-items:center;
+  font-family:var(--mono);font-size:13px;font-weight:600;
+  color:var(--accent);background:var(--accent-soft);border-radius:8px;
+}
+.card-head h2{margin:0;font-size:clamp(20px,2.8vw,25px);line-height:1.25;letter-spacing:-.01em;font-weight:620;color:var(--white)}
+.card-note{margin:0 0 20px;max-width:70ch;color:var(--dim);font-size:14.5px;line-height:1.65}
+
+.code-block{
+  margin:0 0 14px;
+  background:var(--code);border:1px solid var(--line);border-radius:var(--r);
+  overflow:hidden;
+}
+/* Native disclosure keeps optional boilerplate out of the exam reading flow. */
+.boilerplate{margin:0 0 14px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.boilerplate summary{padding:14px 18px;cursor:pointer;color:var(--dim);font-size:13px;min-height:48px}
+.boilerplate[open] summary{border-bottom:1px solid var(--line)}
+.boilerplate .code-block{margin:0;border:0;border-radius:0 0 var(--r) var(--r)}
+@media (hover:hover){.boilerplate summary:hover{background:var(--surface-2)}}
+@supports (interpolate-size:allow-keywords){
+  .boilerplate{interpolate-size:allow-keywords}
+  .boilerplate::details-content{block-size:0;opacity:0;overflow:clip}
+  .boilerplate[open]::details-content{block-size:auto;opacity:1}
+  @media (prefers-reduced-motion:no-preference){
+    .boilerplate::details-content{
+      transition:block-size .28s cubic-bezier(.2,0,0,1),opacity .2s ease,content-visibility .28s;
+      transition-behavior:allow-discrete;
+    }
+  }
+}
+
+.code-tab{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 8px 8px 14px;
+  background:var(--surface);border-bottom:1px solid var(--line);
+}
+.lang{
+  flex-shrink:0;font:600 11px var(--mono);letter-spacing:.04em;
+  color:var(--accent);background:var(--accent-soft);border-radius:6px;padding:3px 8px;
+}
+.fname{flex:1;min-width:0;font:12.5px var(--mono);color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.copy{
+  flex-shrink:0;min-height:34px;padding:0 14px;
+  font:inherit;font-size:12.5px;color:var(--text);
+  background:transparent;border:1px solid var(--line-2);border-radius:8px;cursor:pointer;
+  position:relative;overflow:hidden;min-width:84px;min-height:44px;
+  transition:transform .18s ease,color .2s ease,border-color .2s ease,background .2s ease;
+}
+@media (hover:hover){.copy:hover{color:var(--white);background:var(--surface-2)}}
+.copy:active{transform:scale(.96)}
+.copy::after{content:"";position:absolute;inset:0;background:var(--accent);opacity:0;transform:scale(.25);pointer-events:none}
+.copy.done{color:var(--accent-ink);background:var(--accent);border-color:var(--accent)}
+@media (prefers-reduced-motion:no-preference){
+  .copy.done{animation:copy-confirm .32s ease}
+  .copy:active::after{opacity:.15;transform:scale(1);transition:transform .25s ease,opacity .25s ease}
+}
+@keyframes copy-confirm{50%{transform:scale(1.05)}}
+pre{
+  margin:0;padding:18px 20px;overflow-x:auto;
+  font:13px/1.7 var(--mono);tab-size:4;color:var(--text);
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;scrollbar-color:var(--line-2) transparent;
+}
+pre code{font:inherit}
+
+/* Syntax colors distinguish language roles independently of the green UI accent. */
+.t-k{color:#FFB4A2}
+.t-s{color:#A8D98D}
+.t-c{color:#98A492;font-style:italic}
+.t-a{color:#F0D88A}
+.t-ty{color:#8DD9E5}
+.t-n{color:#EBC48D}
+.t-f{color:#F0D88A}
+.t-at{color:#A8C7FA}
+.t-g{color:#FFB4A2}
+.t-p{color:#B7C4B3}
+
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.result,.viva{
+  margin:0;padding:16px 18px;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  font-size:14px;line-height:1.65;color:var(--text);
+}
+.result strong,.viva strong{display:block;margin-bottom:4px;font-size:13px;font-weight:600;color:var(--accent)}
+
+footer{
+  margin-top:8px;padding-top:28px;border-top:1px solid var(--line);
+  color:var(--dim);font-size:13.5px;line-height:1.8;
+}
+footer p{margin:0 0 10px}
+footer a{color:var(--accent);text-underline-offset:3px}
+
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:6px;border:2px solid var(--bg)}
+
+/* scroll reveal, only when JS is running */
+.js section.card{
+  opacity:0;transform:translateY(16px);
+  transition:opacity .55s ease,transform .55s cubic-bezier(.2,.7,.2,1);
+}
+.js section.card.in{opacity:1;transform:none}
+
+/* mobile: top bar + off-canvas program list */
+@media (max-width:900px){
+  html{scroll-padding-top:calc(var(--bar-h) + env(safe-area-inset-top,0px) + 14px)}
+  .shell{display:block}
+  .topbar{
+    display:flex;align-items:center;gap:6px;
+    position:sticky;top:0;z-index:var(--z-bar);
+    min-height:calc(var(--bar-h) + env(safe-area-inset-top,0px));
+    padding:env(safe-area-inset-top,0px) 14px 0 6px;
+    background:var(--bg);border-bottom:1px solid var(--line);
+  }
+  .icon-btn{
+    flex-shrink:0;width:44px;height:44px;display:grid;place-items:center;
+    background:transparent;border:0;border-radius:var(--r);color:var(--white);cursor:pointer;
+  }
+  .icon-btn:active{background:var(--surface)}
+  .icon-btn svg{width:22px;height:22px}
+  .topbar-text{min-width:0;display:flex;flex-direction:column;line-height:1.25}
+  .topbar-text strong{font-size:14px;font-weight:600;color:var(--white)}
+  .topbar-text span{font-size:12.5px;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .rail-close{display:grid}
+
+  .rail{
+    position:fixed;top:0;bottom:0;left:0;height:auto;
+    width:min(86vw,330px);
+    z-index:var(--z-drawer);
+    padding-top:calc(16px + env(safe-area-inset-top,0px));
+    padding-bottom:calc(28px + env(safe-area-inset-bottom,0px));
+    border-right:1px solid var(--line-2);
+    box-shadow:0 0 48px rgba(0,0,0,.55);
+    transform:translateX(-104%);visibility:hidden;
+    transition:transform .34s cubic-bezier(.2,.7,.2,1),visibility 0s linear .34s;
+    overscroll-behavior:contain;
+  }
+  .rail.open{transform:none;visibility:visible;transition-delay:0s}
+  .scrim{
+    display:block;position:fixed;inset:0;z-index:var(--z-scrim);
+    background:rgba(0,0,0,.62);
+    opacity:0;visibility:hidden;
+    transition:opacity .3s ease,visibility 0s linear .3s;
+  }
+  .scrim.show{opacity:1;visibility:visible;transition-delay:0s}
+  .tree-item{min-height:46px;padding:11px 12px;font-size:15px}
+
+  .editor{padding:26px 18px 80px}
+  .setup{grid-template-columns:1fr;padding:20px 18px;margin-bottom:48px}
+  .notes{grid-template-columns:1fr}
+  section.card{margin-bottom:56px}
+  pre{font-size:12.5px;padding:16px 16px}
+  .search kbd{display:none}
+  .btn{flex:1}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html,.rail{scroll-behavior:auto}
+  .js section.card{opacity:1;transform:none;transition:none}
+  *{transition-duration:.01ms!important}
+}
+
+
+</style>
+</head>
+<body>
+<div class="progress" aria-hidden="true"></div>
+
+<header class="topbar">
+  <button type="button" class="icon-btn" id="menu" aria-label="Open program list" aria-expanded="false" aria-controls="nav">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+  </button>
+  <div class="topbar-text"><strong>MAD Final Practical</strong><span id="here">01 Activity Life Cycle</span></div>
+</header>
+<div class="scrim" id="scrim"></div>
+
+<div class="shell">
+<nav class="rail" id="nav" aria-label="Programs">
+  <div class="rail-head">
+    <div><span class="rail-title">MAD Final Practical</span><span class="rail-sub">12 programs</span></div>
+    <button type="button" class="icon-btn rail-close" id="close" aria-label="Close program list">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <a href="#p1" class="tree-item"><span class="tree-num">01</span><span class="tree-title">Activity Life Cycle</span></a>
+  <a href="#p2" class="tree-item"><span class="tree-num">02</span><span class="tree-title">Create a Fragment</span></a>
+  <a href="#p3" class="tree-item"><span class="tree-num">03</span><span class="tree-title">Button View</span></a>
+  <a href="#p4" class="tree-item"><span class="tree-num">04</span><span class="tree-title">EditText View</span></a>
+  <a href="#p5" class="tree-item"><span class="tree-num">05</span><span class="tree-title">CheckBox</span></a>
+  <a href="#p6" class="tree-item"><span class="tree-num">06</span><span class="tree-title">ImageView</span></a>
+  <a href="#p7" class="tree-item"><span class="tree-num">07</span><span class="tree-title">Radio Buttons</span></a>
+  <a href="#p8" class="tree-item"><span class="tree-num">08</span><span class="tree-title">Spinner View</span></a>
+  <a href="#p9" class="tree-item"><span class="tree-num">09</span><span class="tree-title">Alert Dialog Box</span></a>
+  <a href="#p10" class="tree-item"><span class="tree-num">10</span><span class="tree-title">Progress Bar Dialog Box</span></a>
+  <a href="#p11" class="tree-item"><span class="tree-num">11</span><span class="tree-title">Analog and Digital Clock</span></a>
+  <a href="#p12" class="tree-item"><span class="tree-num">12</span><span class="tree-title">Relative Layout</span></a>
+</nav>
+
+<main class="editor">
+<header class="hero">
+  <h1>MAD Final Practical</h1>
+  <p class="meta">12 programs · Java + XML · Offline reference</p>
+  <div class="tools">
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4-4"/></svg>
+      <input id="search" type="search" aria-label="Search programs and code" placeholder="Search a program, view or method" autocomplete="off" spellcheck="false">
+      <kbd aria-hidden="true">/</kbd>
+    </div>
+    <button type="button" class="btn" id="clear">Clear</button>
+  </div>
+  <p id="count">12 / 12 programs</p>
+  <p id="status" class="sr-only" role="status" aria-live="polite"></p>
+</header>
+
+<div class="setup" id="setup">
+<h2>Before you start</h2>
+<p>Create an <strong>Empty Views Activity</strong> project in <strong>Java</strong>. Run on <strong>Pixel 4 / Pixel 4 XL</strong> with <strong>Android 10 (API 29)</strong>; set the project minimum SDK to API 29 or lower.</p>
+<p>Replace <code>res/layout/activity_main.xml</code> for each program. <strong>6, 11 and 12 need only XML</strong>; keep the generated activity. For the others, replace <code>MainActivity.java</code> and use your package name. Match XML IDs to Java <code>R.id</code> names. Fragment needs its two extra files.</p>
+</div>
+
+<p id="empty" class="empty" hidden>No matching programs. Try another keyword or clear the search.</p>
+
+<section class="card" id="p1"><div class="card-head"><span class="badge">01</span><h2>Activity Life Cycle</h2></div><p class="card-note">Log each callback; filter Logcat by LifecycleDemo.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:orientation=&quot;vertical&quot;
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;match_parent&quot;&gt;
+
+    &lt;TextView
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot;
+        android:text=&quot;Lifecycle Demo&quot;
+        android:textSize=&quot;20sp&quot;/&gt;
+&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
+import android.util.Log;
+
+public class MainActivity extends AppCompatActivity {
+    String TAG = &quot;LifecycleDemo&quot;;
+
+    protected void onCreate(Bundle b) {
+        super.onCreate(b);
+        setContentView(R.layout.activity_main);
+        Log.d(TAG, &quot;onCreate&quot;);
+    }
+    protected void onStart()   { super.onStart();   Log.d(TAG, &quot;onStart&quot;); }
+    protected void onResume()  { super.onResume();  Log.d(TAG, &quot;onResume&quot;); }
+    protected void onPause()   { super.onPause();   Log.d(TAG, &quot;onPause&quot;); }
+    protected void onStop()    { super.onStop();    Log.d(TAG, &quot;onStop&quot;); }
+    protected void onRestart() { super.onRestart(); Log.d(TAG, &quot;onRestart&quot;); }
+    protected void onDestroy() { super.onDestroy(); Log.d(TAG, &quot;onDestroy&quot;); }
+}</code></pre></div><div class="notes"><p class="result"><strong>Check output</strong>Launch: onCreate → onStart → onResume. Home: onPause → onStop. Return: onRestart → onStart → onResume. Back finishes the activity; onDestroy is not guaranteed if the process is killed.</p><p class="viva"><strong>Remember</strong>onStart = visible; onResume = interactive. onPause is not the place for slow work.</p></div></section>
+<section class="card" id="p2"><div class="card-head"><span class="badge">02</span><h2>Create a Fragment</h2></div><p class="card-note">Create both fragment files and the activity container. Use AndroidX Fragment with the support fragment manager.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">fragment_blank.xml</span><button type="button" class="copy" aria-label="Copy fragment_blank.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;match_parent&quot;
+    android:gravity=&quot;center&quot;&gt;
+
+    &lt;TextView
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot;
+        android:text=&quot;This is my Fragment&quot;
+        android:textSize=&quot;18sp&quot;/&gt;
+&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">BlankFragment.java</span><button type="button" class="copy" aria-label="Copy BlankFragment.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+
+import android.os.Bundle;
+import android.view.*;
+import androidx.fragment.app.Fragment;
+
+public class BlankFragment extends Fragment {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_blank, container, false);
+    }
+}</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;FrameLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:id=&quot;@+id/fragment_container&quot;
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;match_parent&quot;/&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle b) {
+        super.onCreate(b);
+        setContentView(R.layout.activity_main);
+        if (b == null) {
+            getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new BlankFragment())
+                .commit();
+        }
+    }
+}
+</code></pre></div><div class="notes"><p class="result"><strong>Check output</strong>The activity shows “This is my Fragment”. Rotate the screen: the restored fragment is kept.</p><p class="viva"><strong>Remember</strong>inflate(layout, container, false) creates the view without attaching it twice. Fragments have no manifest entry.</p></div></section>
+<section class="card" id="p3"><div class="card-head"><span class="badge">03</span><h2>Button View</h2></div><p class="card-note">A click listener updates a TextView.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;match_parent&quot;
+    android:orientation=&quot;vertical&quot;
+    android:padding=&quot;24dp&quot;&gt;
+
+    &lt;Button android:id=&quot;@+id/btnClick&quot;
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot;
+        android:text=&quot;Click me&quot; /&gt;
+    &lt;TextView android:id=&quot;@+id/tvResult&quot; android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot; android:text=&quot;Waiting for click&quot; /&gt;
+&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+
+import android.os.Bundle;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle b) {
+        super.onCreate(b);
+        setContentView(R.layout.activity_main);
+        TextView result = findViewById(R.id.tvResult);
+        findViewById(R.id.btnClick).setOnClickListener(v -&gt; result.setText(&quot;Button clicked!&quot;));
+    }
+}
+</code></pre></div><div class="notes"><p class="result"><strong>Check output</strong>Tap the button: the text changes to “Button clicked!”.</p><p class="viva"><strong>Remember</strong>setOnClickListener registers an event callback; findViewById binds an XML ID.</p></div></section>
+<section class="card" id="p4"><div class="card-head"><span class="badge">04</span><h2>EditText View</h2></div><p class="card-note">Read the EditText value and display it in a Toast.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;match_parent&quot;
+    android:orientation=&quot;vertical&quot;
+    android:padding=&quot;24dp&quot;&gt;
+
+    &lt;EditText android:id=&quot;@+id/etName&quot; android:layout_width=&quot;match_parent&quot;
+        android:layout_height=&quot;wrap_content&quot; android:hint=&quot;Enter your name&quot;
+        android:inputType=&quot;textPersonName&quot; android:minHeight=&quot;48dp&quot; /&gt;
+    &lt;Button android:id=&quot;@+id/btnSubmit&quot;
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot;
+        android:text=&quot;Submit&quot; /&gt;
+&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+
+import android.os.Bundle;
+import android.widget.EditText;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle b) {
+        super.onCreate(b);
+        setContentView(R.layout.activity_main);
+        EditText name = findViewById(R.id.etName);
+        findViewById(R.id.btnSubmit).setOnClickListener(v -&gt; {
+            Toast.makeText(this, name.getText().toString(), Toast.LENGTH_SHORT).show();
+        });
+    }
+}
+</code></pre></div><div class="notes"><p class="result"><strong>Check output</strong>Enter a name and tap Submit: the text appears in a Toast.</p><p class="viva"><strong>Remember</strong>getText() returns Editable; toString() converts it to String. inputType selects the keyboard.</p></div></section>
+<section class="card" id="p5"><div class="card-head"><span class="badge">05</span><h2>CheckBox</h2></div><p class="card-note">Select zero, one, or both sports; display the result.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:orientation=&quot;vertical&quot;
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;match_parent&quot;&gt;
+
+    &lt;CheckBox android:id=&quot;@+id/cb1&quot; android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot; android:text=&quot;Cricket&quot;/&gt;
+    &lt;CheckBox android:id=&quot;@+id/cb2&quot; android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot; android:text=&quot;Football&quot;/&gt;
+    &lt;Button android:id=&quot;@+id/btnSubmit&quot; android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot; android:text=&quot;Submit&quot;/&gt;
+&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+
+import android.os.Bundle;
+import android.widget.CheckBox;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle b) {
+        super.onCreate(b);
+        setContentView(R.layout.activity_main);
+        CheckBox cb1 = findViewById(R.id.cb1), cb2 = findViewById(R.id.cb2);
+        findViewById(R.id.btnSubmit).setOnClickListener(v -&gt; {
+            String msg = &quot;&quot;;
+            if (cb1.isChecked()) msg += &quot;Cricket &quot;;
+            if (cb2.isChecked()) msg += &quot;Football&quot;;
+            if (msg.isEmpty()) msg = &quot;None&quot;;
+            Toast.makeText(this, &quot;Selected: &quot; + msg, Toast.LENGTH_SHORT).show();
+        });
+    }
+}
+</code></pre></div><div class="notes"><p class="result"><strong>Check output</strong>Submit shows Cricket, Football, both, or None.</p><p class="viva"><strong>Remember</strong>CheckBoxes allow independent multiple selections. isChecked() returns boolean.</p></div></section>
+<section class="card" id="p6"><div class="card-head"><span class="badge">06</span><h2>ImageView</h2></div><p class="card-note">Uses the existing launcher resource, so no extra image download is required.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:id=&quot;@+id/main&quot;
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;match_parent&quot;
+    android:gravity=&quot;center&quot;&gt;
+
+    &lt;ImageView
+        android:layout_width=&quot;200dp&quot;
+        android:layout_height=&quot;200dp&quot;
+        android:src=&quot;@mipmap/ic_launcher&quot;
+        android:contentDescription=&quot;sample image&quot;/&gt;
+&lt;/LinearLayout&gt;</code></pre></div><details class="boilerplate">
+<summary>MainActivity.java (optional)</summary>
+<div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle b) {
+        super.onCreate(b);
+        setContentView(R.layout.activity_main);
+    }
+}
+</code></pre></div>
+</details><div class="notes"><p class="result"><strong>Check output</strong>A 200dp × 200dp launcher image appears in the centre.</p><p class="viva"><strong>Remember</strong>For your own image, add sample.png to res/drawable and use @drawable/sample. setImageResource() changes it in Java.</p></div></section>
+<section class="card" id="p7"><div class="card-head"><span class="badge">07</span><h2>Radio Buttons</h2></div><p class="card-note">RadioGroup permits one selection. Male is checked by default.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:orientation=&quot;vertical&quot;
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;match_parent&quot;&gt;
+
+    &lt;RadioGroup android:id=&quot;@+id/rgGender&quot;
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot;&gt;
+
+        &lt;RadioButton android:id=&quot;@+id/rbMale&quot; android:layout_width=&quot;wrap_content&quot;
+            android:layout_height=&quot;wrap_content&quot; android:text=&quot;Male&quot; android:checked=&quot;true&quot;/&gt;
+        &lt;RadioButton android:id=&quot;@+id/rbFemale&quot; android:layout_width=&quot;wrap_content&quot;
+            android:layout_height=&quot;wrap_content&quot; android:text=&quot;Female&quot;/&gt;
+    &lt;/RadioGroup&gt;
+
+    &lt;Button android:id=&quot;@+id/btnCheck&quot; android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot; android:text=&quot;Check&quot;/&gt;
+&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+
+import android.os.Bundle;
+import android.widget.RadioGroup;
+import android.widget.RadioButton;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle b) {
+        super.onCreate(b);
+        setContentView(R.layout.activity_main);
+        RadioGroup rg = findViewById(R.id.rgGender);
+        findViewById(R.id.btnCheck).setOnClickListener(v -&gt; {
+            RadioButton rb = findViewById(rg.getCheckedRadioButtonId());
+            Toast.makeText(this, &quot;Selected: &quot; + rb.getText(), Toast.LENGTH_SHORT).show();
+        });
+    }
+}
+</code></pre></div><div class="notes"><p class="result"><strong>Check output</strong>Tap Check to show the selected option, including the default selection.</p><p class="viva"><strong>Remember</strong>RadioButton children must be inside the same RadioGroup for mutual exclusion.</p></div></section>
+<section class="card" id="p8"><div class="card-head"><span class="badge">08</span><h2>Spinner View</h2></div><p class="card-note">Use an ArrayAdapter for the collapsed item and dropdown.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:orientation=&quot;vertical&quot;
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;match_parent&quot;&gt;
+
+    &lt;Spinner
+        android:id=&quot;@+id/spinner&quot;
+        android:layout_width=&quot;match_parent&quot;
+        android:layout_height=&quot;wrap_content&quot;/&gt;
+&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+
+import android.os.Bundle;
+import android.widget.Spinner;
+import android.widget.ArrayAdapter;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle b) {
+        super.onCreate(b);
+        setContentView(R.layout.activity_main);
+        Spinner spinner = findViewById(R.id.spinner);
+        String[] cities = {&quot;Hyderabad&quot;, &quot;Chennai&quot;, &quot;Mumbai&quot;, &quot;Delhi&quot;};
+        ArrayAdapter&lt;String&gt; adapter = new ArrayAdapter&lt;&gt;(this,
+                android.R.layout.simple_spinner_item, cities);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+    }
+}
+</code></pre></div><div class="notes"><p class="result"><strong>Check output</strong>Open the dropdown and select a city; it becomes the displayed item.</p><p class="viva"><strong>Remember</strong>ArrayAdapter connects the city array to the Spinner. No selection listener is needed to display choices.</p></div></section>
+<section class="card" id="p9"><div class="card-head"><span class="badge">09</span><h2>Alert Dialog Box</h2></div><p class="card-note">Show a confirmation dialog from a button click.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;match_parent&quot;
+    android:orientation=&quot;vertical&quot;
+    android:padding=&quot;24dp&quot;&gt;
+
+    &lt;Button android:id=&quot;@+id/btnShow&quot;
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot;
+        android:text=&quot;Show alert&quot; /&gt;
+&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+
+import android.os.Bundle;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
+
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle b) {
+        super.onCreate(b);
+        setContentView(R.layout.activity_main);
+        findViewById(R.id.btnShow).setOnClickListener(v -&gt; new AlertDialog.Builder(this)
+            .setTitle(&quot;Confirm&quot;)
+            .setMessage(&quot;Do you want to continue?&quot;)
+            .setPositiveButton(&quot;Yes&quot;, (dialog, which) -&gt;
+                Toast.makeText(this, &quot;Confirmed&quot;, Toast.LENGTH_SHORT).show())
+            .setNegativeButton(&quot;No&quot;, null)
+            .show());
+    }
+}
+</code></pre></div><div class="notes"><p class="result"><strong>Check output</strong>Yes shows “Confirmed”; No closes the dialog.</p><p class="viva"><strong>Remember</strong>Builder configures title, message and buttons; show() creates and displays the dialog.</p></div></section>
+<section class="card" id="p10"><div class="card-head"><span class="badge">10</span><h2>Progress Bar Dialog Box</h2></div><p class="card-note">Show a minimal, cancelable loading dialog. ProgressDialog is deprecated since API 26; this example follows the legacy practical topic.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;match_parent&quot;
+    android:orientation=&quot;vertical&quot;
+    android:padding=&quot;24dp&quot;&gt;
+
+    &lt;Button android:id=&quot;@+id/btnProgress&quot;
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot;
+        android:text=&quot;Start progress&quot; /&gt;
+&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+
+import android.os.Bundle;
+import android.app.ProgressDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+    protected void onCreate(Bundle b) {
+        super.onCreate(b);
+        setContentView(R.layout.activity_main);
+        findViewById(R.id.btnProgress).setOnClickListener(v -&gt; {
+            ProgressDialog p = new ProgressDialog(this);
+            p.setTitle(&quot;Please wait&quot;);
+            p.setMessage(&quot;Loading...&quot;);
+            p.show();
+        });
+    }
+}
+</code></pre></div><div class="notes"><p class="result"><strong>Check output</strong>Tap Start progress: a loading spinner appears. Press Back or tap outside to dismiss it. No background task runs.</p><p class="viva"><strong>Remember</strong>The default style is an indeterminate spinner. Use STYLE_HORIZONTAL only when the question requires numeric progress.</p></div></section>
+<section class="card" id="p11"><div class="card-head"><span class="badge">11</span><h2>Analog and Digital Clock</h2></div><p class="card-note">AnalogClock is deprecated since API 23; DigitalClock since API 17. The main answer keeps the syllabus AnalogClock and uses TextClock for digital time.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:id=&quot;@+id/main&quot;
+    android:orientation=&quot;vertical&quot;
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;match_parent&quot;
+    android:gravity=&quot;center&quot;&gt;
+
+    &lt;AnalogClock
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot;/&gt;
+
+    &lt;TextClock
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot;
+        android:format12Hour=&quot;hh:mm:ss a&quot;
+        android:format24Hour=&quot;HH:mm:ss&quot;
+        android:textSize=&quot;24sp&quot;
+        android:layout_marginTop=&quot;20dp&quot;/&gt;
+&lt;/LinearLayout&gt;</code></pre></div><details class="boilerplate">
+<summary>MainActivity.java (optional)</summary>
+<div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle b) {
+        super.onCreate(b);
+        setContentView(R.layout.activity_main);
+    }
+}
+</code></pre></div>
+</details><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml · legacy digital alternative</span><button type="button" class="copy" aria-label="Copy activity_main.xml · legacy digital alternative">Copy</button></div><pre tabindex="0"><code>&lt;!-- Replace TextClock with this only if the examiner asks for DigitalClock. --&gt;
+&lt;DigitalClock xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:layout_width=&quot;wrap_content&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    android:textSize=&quot;24sp&quot; /&gt;</code></pre></div><div class="notes"><p class="result"><strong>Check output</strong>The analog dial and digital time update automatically; TextClock follows the device 12/24-hour setting.</p><p class="viva"><strong>Remember</strong>TextClock is available from API 17. No timer or Java update loop is needed.</p></div></section>
+<section class="card" id="p12"><div class="card-head"><span class="badge">12</span><h2>Relative Layout</h2></div><p class="card-note">Place child views relative to their parent or another child ID.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;RelativeLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:id=&quot;@+id/main&quot;
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;match_parent&quot;&gt;
+
+    &lt;TextView android:id=&quot;@+id/tvTitle&quot;
+        android:layout_width=&quot;wrap_content&quot; android:layout_height=&quot;wrap_content&quot;
+        android:layout_centerHorizontal=&quot;true&quot;
+        android:layout_marginTop=&quot;20dp&quot;
+        android:text=&quot;Relative Layout Demo&quot; android:textSize=&quot;20sp&quot;/&gt;
+
+    &lt;Button android:id=&quot;@+id/btnLeft&quot;
+        android:layout_width=&quot;wrap_content&quot; android:layout_height=&quot;wrap_content&quot;
+        android:layout_below=&quot;@id/tvTitle&quot;
+        android:layout_alignParentStart=&quot;true&quot;
+        android:text=&quot;Left&quot;/&gt;
+
+    &lt;Button android:id=&quot;@+id/btnRight&quot;
+        android:layout_width=&quot;wrap_content&quot; android:layout_height=&quot;wrap_content&quot;
+        android:layout_below=&quot;@id/tvTitle&quot;
+        android:layout_alignParentEnd=&quot;true&quot;
+        android:text=&quot;Right&quot;/&gt;
+
+    &lt;Button
+        android:layout_width=&quot;wrap_content&quot; android:layout_height=&quot;wrap_content&quot;
+        android:layout_centerInParent=&quot;true&quot;
+        android:text=&quot;Center&quot;/&gt;
+&lt;/RelativeLayout&gt;</code></pre></div><details class="boilerplate">
+<summary>MainActivity.java (optional)</summary>
+<div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle b) {
+        super.onCreate(b);
+        setContentView(R.layout.activity_main);
+    }
+}
+</code></pre></div>
+</details><div class="notes"><p class="result"><strong>Check output</strong>A title appears at the top, two buttons below it at opposite edges, and one in the centre.</p><p class="viva"><strong>Remember</strong>layout_below references another view ID. Start/end respects right-to-left layout directions.</p></div></section>
+
+</main>
+</div>
+
+<script>
+(function(){
+  var $=function(s,r){return (r||document).querySelector(s)};
+  var cards=[].slice.call(document.querySelectorAll('section.card'));
+  var links=[].slice.call(document.querySelectorAll('.tree-item'));
+  var rail=$('#nav'),scrim=$('#scrim'),menu=$('#menu'),closeBtn=$('#close');
+  var search=$('#search'),here=$('#here'),status=$('#status');
+  var mobile=window.matchMedia('(max-width:900px)');
+
+  /* ---------- syntax highlighting (display only, copy uses textContent) ---------- */
+  var esc=function(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')};
+  var KW='abstract|boolean|break|case|catch|class|continue|default|double|else|enum|extends|final|finally|float|for|if|implements|import|instanceof|int|interface|long|new|null|package|private|protected|public|return|static|super|switch|this|throw|throws|true|false|try|void|while|var';
+  var JAVA={re:new RegExp('(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)|("(?:[^"\\\\\\n]|\\\\.)*")|(@[A-Za-z]\\w*)|\\b('+KW+')\\b|\\b([A-Z][A-Za-z0-9_]*)\\b|\\b(\\d+(?:\\.\\d+)?)\\b|\\b([a-z_]\\w*)(?=\\()','g'),cls:['c','s','a','k','ty','n','f']};
+  var XML={re:/(<!--[\s\S]*?-->)|("[^"]*")|(<\/?[A-Za-z][\w.]*)|([A-Za-z_][\w.:-]*)(?==)|(\/?>)/g,cls:['c','s','g','at','p']};
+  function paint(src,L){
+    var re=L.re,out='',last=0,m,i;
+    re.lastIndex=0;
+    while((m=re.exec(src))){
+      if(m[0]===''){re.lastIndex++;continue}
+      out+=esc(src.slice(last,m.index));
+      i=1;while(m[i]===undefined)i++;
+      out+='<span class="t-'+L.cls[i-1]+'">'+esc(m[0])+'</span>';
+      last=re.lastIndex;
+    }
+    return out+esc(src.slice(last));
+  }
+  [].forEach.call(document.querySelectorAll('.code-block'),function(b){
+    var code=$('code',b),lang=$('.lang',b);
+    if(!code||!lang)return;
+    code.innerHTML=paint(code.textContent,lang.textContent==='XML'?XML:JAVA);
+  });
+
+  /* ---------- drawer (mobile) ---------- */
+  function setOpen(open){
+    rail.classList.toggle('open',open);
+    scrim.classList.toggle('show',open);
+    menu.setAttribute('aria-expanded',String(open));
+    document.body.classList.toggle('lock',open);
+    if(open){var a=$('.tree-item[aria-current]',rail)||$('.tree-item:not([hidden])',rail);if(a)a.focus({preventScroll:true})}
+  }
+  menu.addEventListener('click',function(){setOpen(true)});
+  closeBtn.addEventListener('click',function(){setOpen(false);menu.focus()});
+  scrim.addEventListener('click',function(){setOpen(false)});
+  links.forEach(function(l){l.addEventListener('click',function(){if(mobile.matches)setOpen(false)})});
+  var onMq=function(){if(!mobile.matches)setOpen(false)};
+  if(mobile.addEventListener)mobile.addEventListener('change',onMq);else mobile.addListener(onMq);
+
+  /* ---------- search ---------- */
+  function filter(){
+    var q=search.value.toLowerCase().trim(),n=0;
+    cards.forEach(function(c,i){
+      var show=c.textContent.toLowerCase().indexOf(q)!==-1;
+      c.hidden=!show;links[i].hidden=!show;if(show)n++;
+    });
+    $('#count').textContent=n+' / 12 programs';
+    $('#empty').hidden=n!==0;
+  }
+  search.addEventListener('input',filter);
+  $('#clear').addEventListener('click',function(){search.value='';filter();search.focus()});
+  document.addEventListener('keydown',function(e){
+    var t=e.target,typing=t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable);
+    if(e.key==='/'&&!typing&&!e.metaKey&&!e.ctrlKey&&!e.altKey){e.preventDefault();search.focus();search.select()}
+    else if(e.key==='Escape'){
+      if(rail.classList.contains('open')){setOpen(false);menu.focus()}
+      else if(t===search){search.value='';filter();search.blur()}
+    }
+  });
+
+  /* ---------- copy ---------- */
+  [].forEach.call(document.querySelectorAll('.copy'),function(b){
+    b.addEventListener('click',function(){
+      var block=b.closest('.code-block'),value=$('code',block).textContent,name=$('.fname',block).textContent;
+      var done=function(){status.textContent='Copied '+name;clearTimeout(b.copyTimer);b.textContent='Copied';b.classList.add('done');b.copyTimer=setTimeout(function(){b.textContent='Copy';b.classList.remove('done')},1500)};
+      var fail=function(){b.textContent='Retry';status.textContent='Copy unavailable. Select the code and copy manually.'};
+      var legacy=function(){
+        try{var t=document.createElement('textarea');t.value=value;t.style.cssText='position:fixed;top:0;opacity:0';document.body.appendChild(t);t.select();var ok=document.execCommand('copy');t.remove();ok?done():fail()}catch(err){fail()}
+      };
+      if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(value).then(done,legacy);else legacy();
+    });
+  });
+
+  /* ---------- reveal + active section (IntersectionObserver, no scroll listeners) ---------- */
+  var current=null;
+  function setActive(c){
+    if(!c||c===current)return;
+    current=c;
+    var id='#'+c.id,link=null;
+    links.forEach(function(l){
+      var yes=l.hash===id;
+      if(yes){l.setAttribute('aria-current','location');link=l}else l.removeAttribute('aria-current');
+    });
+    here.textContent=$('.badge',c).textContent+' '+$('h2',c).textContent;
+    if(link){
+      var r=link.getBoundingClientRect(),p=rail.getBoundingClientRect();
+      if(r.top<p.top+60||r.bottom>p.bottom-60){rail.scrollTo({top:rail.scrollTop+(r.top-p.top)-p.height/2+r.height/2})}
+    }
+  }
+  if('IntersectionObserver' in window){
+    var seen=new Set();
+    var track=new IntersectionObserver(function(es){
+      es.forEach(function(e){if(e.isIntersecting)seen.add(e.target);else seen.delete(e.target)});
+      for(var i=0;i<cards.length;i++){if(seen.has(cards[i])){setActive(cards[i]);break}}
+    },{rootMargin:'-90px 0px -55% 0px'});
+    var reveal=new IntersectionObserver(function(es){
+      es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');reveal.unobserve(e.target)}})
+    },{rootMargin:'0px 0px -6% 0px',threshold:0.02});
+    cards.forEach(function(c){track.observe(c);reveal.observe(c)});
+  }else{
+    cards.forEach(function(c){c.classList.add('in')});
+  }
+  setActive(cards[0]);
+})();
+</script>
+</body>
+</html>
