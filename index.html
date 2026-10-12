@@ -198,6 +198,8 @@ section.card{margin:0 0 72px}
   flex-shrink:0;font:600 11px var(--mono);letter-spacing:.04em;
   color:var(--accent);background:var(--accent-soft);border-radius:6px;padding:3px 8px;
 }
+.lang-java{color:#FFB4A2;background:#3B2924}
+.lang-xml{color:#A8C7FA;background:#263348}
 .fname{flex:1;min-width:0;font:12.5px var(--mono);color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .copy{
   flex-shrink:0;min-height:34px;padding:0 14px;
@@ -380,7 +382,7 @@ footer a{color:var(--accent);text-underline-offset:3px}
 
 <p id="empty" class="empty" hidden>No matching programs. Try another keyword or clear the search.</p>
 
-<section class="card" id="p1"><div class="card-head"><span class="badge">01</span><h2>Activity Life Cycle</h2></div><p class="card-note">Log each callback; filter Logcat by LifecycleDemo.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+<section class="card" id="p1"><div class="card-head"><span class="badge">01</span><h2>Activity Life Cycle</h2></div><p class="card-note">Log each callback; filter Logcat by LifecycleDemo.</p><div class="code-block"><div class="code-tab"><span class="lang lang-xml">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
     android:orientation=&quot;vertical&quot;
     android:layout_width=&quot;match_parent&quot;
     android:layout_height=&quot;match_parent&quot;&gt;
@@ -390,7 +392,7 @@ footer a{color:var(--accent);text-underline-offset:3px}
         android:layout_height=&quot;wrap_content&quot;
         android:text=&quot;Lifecycle Demo&quot;
         android:textSize=&quot;20sp&quot;/&gt;
-&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang lang-java">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -411,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onRestart() { super.onRestart(); Log.d(TAG, &quot;onRestart&quot;); }
     protected void onDestroy() { super.onDestroy(); Log.d(TAG, &quot;onDestroy&quot;); }
 }</code></pre></div><div class="notes"><p class="result"><strong>Check output</strong>Launch: onCreate → onStart → onResume. Home: onPause → onStop. Return: onRestart → onStart → onResume. Back finishes the activity; onDestroy is not guaranteed if the process is killed.</p><p class="viva"><strong>Remember</strong>onStart = visible; onResume = interactive. onPause is not the place for slow work.</p></div></section>
-<section class="card" id="p2"><div class="card-head"><span class="badge">02</span><h2>Create a Fragment</h2></div><p class="card-note">Create both fragment files and the activity container. Use AndroidX Fragment with the support fragment manager.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">fragment_blank.xml</span><button type="button" class="copy" aria-label="Copy fragment_blank.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+<section class="card" id="p2"><div class="card-head"><span class="badge">02</span><h2>Create a Fragment</h2></div><p class="card-note">Create both fragment files and the activity container. Use AndroidX Fragment with the support fragment manager.</p><div class="code-block"><div class="code-tab"><span class="lang lang-xml">XML</span><span class="fname">fragment_blank.xml</span><button type="button" class="copy" aria-label="Copy fragment_blank.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
     android:layout_width=&quot;match_parent&quot;
     android:layout_height=&quot;match_parent&quot;
     android:gravity=&quot;center&quot;&gt;
@@ -421,7 +423,7 @@ public class MainActivity extends AppCompatActivity {
         android:layout_height=&quot;wrap_content&quot;
         android:text=&quot;This is my Fragment&quot;
         android:textSize=&quot;18sp&quot;/&gt;
-&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">BlankFragment.java</span><button type="button" class="copy" aria-label="Copy BlankFragment.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang lang-java">Java</span><span class="fname">BlankFragment.java</span><button type="button" class="copy" aria-label="Copy BlankFragment.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
 
 import android.os.Bundle;
 import android.view.*;
@@ -432,10 +434,10 @@ public class BlankFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_blank, container, false);
     }
-}</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;FrameLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+}</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang lang-xml">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;FrameLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
     android:id=&quot;@+id/fragment_container&quot;
     android:layout_width=&quot;match_parent&quot;
-    android:layout_height=&quot;match_parent&quot;/&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+    android:layout_height=&quot;match_parent&quot;/&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang lang-java">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -453,7 +455,7 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 </code></pre></div><div class="notes"><p class="result"><strong>Check output</strong>The activity shows “This is my Fragment”. Rotate the screen: the restored fragment is kept.</p><p class="viva"><strong>Remember</strong>inflate(layout, container, false) creates the view without attaching it twice. Fragments have no manifest entry.</p></div></section>
-<section class="card" id="p3"><div class="card-head"><span class="badge">03</span><h2>Button View</h2></div><p class="card-note">A click listener updates a TextView.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+<section class="card" id="p3"><div class="card-head"><span class="badge">03</span><h2>Button View</h2></div><p class="card-note">A click listener updates a TextView.</p><div class="code-block"><div class="code-tab"><span class="lang lang-xml">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
     android:layout_width=&quot;match_parent&quot;
     android:layout_height=&quot;match_parent&quot;
     android:orientation=&quot;vertical&quot;
@@ -465,7 +467,7 @@ public class MainActivity extends AppCompatActivity {
         android:text=&quot;Click me&quot; /&gt;
     &lt;TextView android:id=&quot;@+id/tvResult&quot; android:layout_width=&quot;wrap_content&quot;
         android:layout_height=&quot;wrap_content&quot; android:text=&quot;Waiting for click&quot; /&gt;
-&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang lang-java">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
 
 import android.os.Bundle;
 import android.widget.TextView;
@@ -481,7 +483,7 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 </code></pre></div><div class="notes"><p class="result"><strong>Check output</strong>Tap the button: the text changes to “Button clicked!”.</p><p class="viva"><strong>Remember</strong>setOnClickListener registers an event callback; findViewById binds an XML ID.</p></div></section>
-<section class="card" id="p4"><div class="card-head"><span class="badge">04</span><h2>EditText View</h2></div><p class="card-note">Read the EditText value and display it in a Toast.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+<section class="card" id="p4"><div class="card-head"><span class="badge">04</span><h2>EditText View</h2></div><p class="card-note">Read the EditText value and display it in a Toast.</p><div class="code-block"><div class="code-tab"><span class="lang lang-xml">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
     android:layout_width=&quot;match_parent&quot;
     android:layout_height=&quot;match_parent&quot;
     android:orientation=&quot;vertical&quot;
@@ -494,7 +496,7 @@ public class MainActivity extends AppCompatActivity {
         android:layout_width=&quot;wrap_content&quot;
         android:layout_height=&quot;wrap_content&quot;
         android:text=&quot;Submit&quot; /&gt;
-&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang lang-java">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
 
 import android.os.Bundle;
 import android.widget.EditText;
@@ -513,7 +515,7 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 </code></pre></div><div class="notes"><p class="result"><strong>Check output</strong>Enter a name and tap Submit: the text appears in a Toast.</p><p class="viva"><strong>Remember</strong>getText() returns Editable; toString() converts it to String. inputType selects the keyboard.</p></div></section>
-<section class="card" id="p5"><div class="card-head"><span class="badge">05</span><h2>CheckBox</h2></div><p class="card-note">Select zero, one, or both sports; display the result.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+<section class="card" id="p5"><div class="card-head"><span class="badge">05</span><h2>CheckBox</h2></div><p class="card-note">Select zero, one, or both sports; display the result.</p><div class="code-block"><div class="code-tab"><span class="lang lang-xml">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
     android:orientation=&quot;vertical&quot;
     android:layout_width=&quot;match_parent&quot;
     android:layout_height=&quot;match_parent&quot;&gt;
@@ -524,7 +526,7 @@ public class MainActivity extends AppCompatActivity {
         android:layout_height=&quot;wrap_content&quot; android:text=&quot;Football&quot;/&gt;
     &lt;Button android:id=&quot;@+id/btnSubmit&quot; android:layout_width=&quot;wrap_content&quot;
         android:layout_height=&quot;wrap_content&quot; android:text=&quot;Submit&quot;/&gt;
-&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang lang-java">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
 
 import android.os.Bundle;
 import android.widget.CheckBox;
@@ -547,7 +549,7 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 </code></pre></div><div class="notes"><p class="result"><strong>Check output</strong>Submit shows Cricket, Football, both, or None.</p><p class="viva"><strong>Remember</strong>CheckBoxes allow independent multiple selections. isChecked() returns boolean.</p></div></section>
-<section class="card" id="p6"><div class="card-head"><span class="badge">06</span><h2>ImageView</h2></div><p class="card-note">Uses the existing launcher resource, so no extra image download is required.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+<section class="card" id="p6"><div class="card-head"><span class="badge">06</span><h2>ImageView</h2></div><p class="card-note">Uses the existing launcher resource, so no extra image download is required.</p><div class="code-block"><div class="code-tab"><span class="lang lang-xml">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
     android:id=&quot;@+id/main&quot;
     android:layout_width=&quot;match_parent&quot;
     android:layout_height=&quot;match_parent&quot;
@@ -560,7 +562,7 @@ public class MainActivity extends AppCompatActivity {
         android:contentDescription=&quot;sample image&quot;/&gt;
 &lt;/LinearLayout&gt;</code></pre></div><details class="boilerplate">
 <summary>MainActivity.java (optional)</summary>
-<div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+<div class="code-block"><div class="code-tab"><span class="lang lang-java">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -574,7 +576,7 @@ public class MainActivity extends AppCompatActivity {
 }
 </code></pre></div>
 </details><div class="notes"><p class="result"><strong>Check output</strong>A 200dp × 200dp launcher image appears in the centre.</p><p class="viva"><strong>Remember</strong>For your own image, add sample.png to res/drawable and use @drawable/sample. setImageResource() changes it in Java.</p></div></section>
-<section class="card" id="p7"><div class="card-head"><span class="badge">07</span><h2>Radio Buttons</h2></div><p class="card-note">RadioGroup permits one selection. Male is checked by default.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+<section class="card" id="p7"><div class="card-head"><span class="badge">07</span><h2>Radio Buttons</h2></div><p class="card-note">RadioGroup permits one selection. Male is checked by default.</p><div class="code-block"><div class="code-tab"><span class="lang lang-xml">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
     android:orientation=&quot;vertical&quot;
     android:layout_width=&quot;match_parent&quot;
     android:layout_height=&quot;match_parent&quot;&gt;
@@ -591,7 +593,7 @@ public class MainActivity extends AppCompatActivity {
 
     &lt;Button android:id=&quot;@+id/btnCheck&quot; android:layout_width=&quot;wrap_content&quot;
         android:layout_height=&quot;wrap_content&quot; android:text=&quot;Check&quot;/&gt;
-&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang lang-java">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
 
 import android.os.Bundle;
 import android.widget.RadioGroup;
@@ -612,7 +614,7 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 </code></pre></div><div class="notes"><p class="result"><strong>Check output</strong>Tap Check to show the selected option, including the default selection.</p><p class="viva"><strong>Remember</strong>RadioButton children must be inside the same RadioGroup for mutual exclusion.</p></div></section>
-<section class="card" id="p8"><div class="card-head"><span class="badge">08</span><h2>Spinner View</h2></div><p class="card-note">Use an ArrayAdapter for the collapsed item and dropdown.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+<section class="card" id="p8"><div class="card-head"><span class="badge">08</span><h2>Spinner View</h2></div><p class="card-note">Use an ArrayAdapter for the collapsed item and dropdown.</p><div class="code-block"><div class="code-tab"><span class="lang lang-xml">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
     android:orientation=&quot;vertical&quot;
     android:layout_width=&quot;match_parent&quot;
     android:layout_height=&quot;match_parent&quot;&gt;
@@ -621,7 +623,7 @@ public class MainActivity extends AppCompatActivity {
         android:id=&quot;@+id/spinner&quot;
         android:layout_width=&quot;match_parent&quot;
         android:layout_height=&quot;wrap_content&quot;/&gt;
-&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang lang-java">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
 
 import android.os.Bundle;
 import android.widget.Spinner;
@@ -642,7 +644,7 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 </code></pre></div><div class="notes"><p class="result"><strong>Check output</strong>Open the dropdown and select a city; it becomes the displayed item.</p><p class="viva"><strong>Remember</strong>ArrayAdapter connects the city array to the Spinner. No selection listener is needed to display choices.</p></div></section>
-<section class="card" id="p9"><div class="card-head"><span class="badge">09</span><h2>Alert Dialog Box</h2></div><p class="card-note">Show a confirmation dialog from a button click.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+<section class="card" id="p9"><div class="card-head"><span class="badge">09</span><h2>Alert Dialog Box</h2></div><p class="card-note">Show a confirmation dialog from a button click.</p><div class="code-block"><div class="code-tab"><span class="lang lang-xml">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
     android:layout_width=&quot;match_parent&quot;
     android:layout_height=&quot;match_parent&quot;
     android:orientation=&quot;vertical&quot;
@@ -652,7 +654,7 @@ public class MainActivity extends AppCompatActivity {
         android:layout_width=&quot;wrap_content&quot;
         android:layout_height=&quot;wrap_content&quot;
         android:text=&quot;Show alert&quot; /&gt;
-&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang lang-java">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
 
 import android.os.Bundle;
 import android.widget.Toast;
@@ -674,7 +676,7 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 </code></pre></div><div class="notes"><p class="result"><strong>Check output</strong>Yes shows “Confirmed”; No closes the dialog.</p><p class="viva"><strong>Remember</strong>Builder configures title, message and buttons; show() creates and displays the dialog.</p></div></section>
-<section class="card" id="p10"><div class="card-head"><span class="badge">10</span><h2>Progress Bar Dialog Box</h2></div><p class="card-note">Show a minimal, cancelable loading dialog. ProgressDialog is deprecated since API 26; this example follows the legacy practical topic.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+<section class="card" id="p10"><div class="card-head"><span class="badge">10</span><h2>Progress Bar Dialog Box</h2></div><p class="card-note">Show a minimal, cancelable loading dialog. ProgressDialog is deprecated since API 26; this example follows the legacy practical topic.</p><div class="code-block"><div class="code-tab"><span class="lang lang-xml">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
     android:layout_width=&quot;match_parent&quot;
     android:layout_height=&quot;match_parent&quot;
     android:orientation=&quot;vertical&quot;
@@ -684,7 +686,7 @@ public class MainActivity extends AppCompatActivity {
         android:layout_width=&quot;wrap_content&quot;
         android:layout_height=&quot;wrap_content&quot;
         android:text=&quot;Start progress&quot; /&gt;
-&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+&lt;/LinearLayout&gt;</code></pre></div><div class="code-block"><div class="code-tab"><span class="lang lang-java">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
 
 import android.os.Bundle;
 import android.app.ProgressDialog;
@@ -703,7 +705,7 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 </code></pre></div><div class="notes"><p class="result"><strong>Check output</strong>Tap Start progress: a loading spinner appears. Press Back or tap outside to dismiss it. No background task runs.</p><p class="viva"><strong>Remember</strong>The default style is an indeterminate spinner. Use STYLE_HORIZONTAL only when the question requires numeric progress.</p></div></section>
-<section class="card" id="p11"><div class="card-head"><span class="badge">11</span><h2>Analog and Digital Clock</h2></div><p class="card-note">AnalogClock is deprecated since API 23; DigitalClock since API 17. The main answer keeps the syllabus AnalogClock and uses TextClock for digital time.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+<section class="card" id="p11"><div class="card-head"><span class="badge">11</span><h2>Analog and Digital Clock</h2></div><p class="card-note">AnalogClock is deprecated since API 23; DigitalClock since API 17. The main answer keeps the syllabus AnalogClock and uses TextClock for digital time.</p><div class="code-block"><div class="code-tab"><span class="lang lang-xml">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
     android:id=&quot;@+id/main&quot;
     android:orientation=&quot;vertical&quot;
     android:layout_width=&quot;match_parent&quot;
@@ -723,7 +725,7 @@ public class MainActivity extends AppCompatActivity {
         android:layout_marginTop=&quot;20dp&quot;/&gt;
 &lt;/LinearLayout&gt;</code></pre></div><details class="boilerplate">
 <summary>MainActivity.java (optional)</summary>
-<div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+<div class="code-block"><div class="code-tab"><span class="lang lang-java">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -736,12 +738,12 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 </code></pre></div>
-</details><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml · legacy digital alternative</span><button type="button" class="copy" aria-label="Copy activity_main.xml · legacy digital alternative">Copy</button></div><pre tabindex="0"><code>&lt;!-- Replace TextClock with this only if the examiner asks for DigitalClock. --&gt;
+</details><div class="code-block"><div class="code-tab"><span class="lang lang-xml">XML</span><span class="fname">activity_main.xml · legacy digital alternative</span><button type="button" class="copy" aria-label="Copy activity_main.xml · legacy digital alternative">Copy</button></div><pre tabindex="0"><code>&lt;!-- Replace TextClock with this only if the examiner asks for DigitalClock. --&gt;
 &lt;DigitalClock xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
     android:layout_width=&quot;wrap_content&quot;
     android:layout_height=&quot;wrap_content&quot;
     android:textSize=&quot;24sp&quot; /&gt;</code></pre></div><div class="notes"><p class="result"><strong>Check output</strong>The analog dial and digital time update automatically; TextClock follows the device 12/24-hour setting.</p><p class="viva"><strong>Remember</strong>TextClock is available from API 17. No timer or Java update loop is needed.</p></div></section>
-<section class="card" id="p12"><div class="card-head"><span class="badge">12</span><h2>Relative Layout</h2></div><p class="card-note">Place child views relative to their parent or another child ID.</p><div class="code-block"><div class="code-tab"><span class="lang">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;RelativeLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+<section class="card" id="p12"><div class="card-head"><span class="badge">12</span><h2>Relative Layout</h2></div><p class="card-note">Place child views relative to their parent or another child ID.</p><div class="code-block"><div class="code-tab"><span class="lang lang-xml">XML</span><span class="fname">activity_main.xml</span><button type="button" class="copy" aria-label="Copy activity_main.xml">Copy</button></div><pre tabindex="0"><code>&lt;RelativeLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
     android:id=&quot;@+id/main&quot;
     android:layout_width=&quot;match_parent&quot;
     android:layout_height=&quot;match_parent&quot;&gt;
@@ -770,7 +772,7 @@ public class MainActivity extends AppCompatActivity {
         android:text=&quot;Center&quot;/&gt;
 &lt;/RelativeLayout&gt;</code></pre></div><details class="boilerplate">
 <summary>MainActivity.java (optional)</summary>
-<div class="code-block"><div class="code-tab"><span class="lang">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
+<div class="code-block"><div class="code-tab"><span class="lang lang-java">Java</span><span class="fname">MainActivity.java</span><button type="button" class="copy" aria-label="Copy MainActivity.java">Copy</button></div><pre tabindex="0"><code>package com.example.madfinal;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
